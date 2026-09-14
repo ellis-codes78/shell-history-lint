@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "shell-history-lint"
+version = "0.1.0"
+description = "Static checks for shell history files: leaked secrets, dangerous commands, bad habits."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "ellis-codes78" }]
+
+[project.scripts]
+shellhist-lint = "shellhist_lint.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["shellhist_lint*"]
