@@ -26,9 +26,13 @@ class Finding:
 # This will miss secrets built from string concatenation and will flag the
 # occasional false positive (a var named "password_prompt" with real text)
 # -- it's a heuristic, not a proof.
+#
+# The lookbehind (rather than \b) is deliberate: real-world names are
+# usually namespaced with an underscore (DB_PASSWORD, AWS_SECRET_KEY), and
+# \b treats "_" as a word character, so it never matches right after one.
 _SECRET_ASSIGNMENT_RE = re.compile(
     r"""(?ix)
-    \b (?:api[_-]?key | secret | token | password | passwd | pwd)
+    (?<![a-z0-9]) (?:api[_-]?key | secret | token | password | passwd | pwd)
     [a-z0-9_]* \s* = \s*
     (['"]?) (?!\$) (?!\{) \S{4,} \1
     """

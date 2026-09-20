@@ -65,6 +65,14 @@ $ shellhist-lint --help
 
 Or just run it in place: `python -m shellhist_lint.cli ~/.zsh_history`.
 
+## Tests
+
+Standard library `unittest`, no test runner to install:
+
+```
+$ python -m unittest discover
+```
+
 ## Status
 
 Early. Four rules exist: leaked-looking credentials, `rm -rf` against a
