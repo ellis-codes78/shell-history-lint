@@ -42,6 +42,29 @@ History files come in a few shapes depending on shell and settings.
 
 Pass `--style` to force one instead of relying on auto-detection.
 
+## Suppressing known-fine findings
+
+Some findings are the same false positive on every run -- a fixture file
+with a fake password, a script that legitimately `rm -rf`s a scratch
+directory it owns. Point `--config` at a suppression file to silence
+those instead of re-reading past them each time:
+
+```
+$ cat .shellhist-lint-ignore
+# <rule-id or *>  <regex, matched against the raw command text>
+secret-in-history  TEST_PASSWORD=
+*                  rm -rf /tmp/scratch-\d+
+
+$ shellhist-lint --config .shellhist-lint-ignore ~/.bash_history
+```
+
+Blank lines and lines starting with `#` are ignored. The first token on
+each line is a rule id (`secret-in-history`, `dangerous-rm`,
+`curl-pipe-shell`, `chmod-777`) or `*` to match any rule; everything
+after the first space is a regular expression checked with `re.search`
+against the full command text, so it doesn't need to match the whole
+line.
+
 ## Why streaming matters here
 
 A history file that's been appended to for years can be tens of megabytes,
@@ -76,9 +99,10 @@ $ python -m unittest discover
 ## Status
 
 Early. Four rules exist: leaked-looking credentials, `rm -rf` against a
-root-ish path, `curl | sh` style pipes, and `chmod 777`. See the roadmap in
-the project notes for what's planned next -- more rules, a config file for
-suppressing known-fine lines, and JSON output for CI.
+root-ish path, `curl | sh` style pipes, and `chmod 777`. A `--config` file
+can suppress known-fine matches. Planned next: `--format json` output for
+CI, more rules (long-lived AWS keys, `ssh` with a password on the command
+line, `git push --force`), and fish shell history support.
 
 ## License
 
